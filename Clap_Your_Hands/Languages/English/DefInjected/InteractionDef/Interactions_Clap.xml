@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
-  <Clap.label>clap hands</Clap.label>
+  <Clap.label>high five</Clap.label>
 
   <Clap.logRulesInitiator.rulesStrings>
     <li>r_logentry->[INITIATOR_nameDef] and [RECIPIENT_nameDef] [clapped].</li>
     <li>r_logentry->[INITIATOR_nameDef] [clapped] with [RECIPIENT_nameDef].</li>
-    <li>clapped->casually clapped hands</li>
+    <li>clapped->casually high-fived</li>
     <li>clapped->enthusiastically high-fived</li>
   </Clap.logRulesInitiator.rulesStrings>
 

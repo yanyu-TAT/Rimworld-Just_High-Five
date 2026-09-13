@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
-  <Clap_Bad.stages.0.label>bad clap</Clap_Bad.stages.0.label>
+  <Clap_Bad.stages.0.label>bad high five</Clap_Bad.stages.0.label>
   <Clap_Bad.stages.0.description>We swung our hands at each other and missed completely. How awkward...</Clap_Bad.stages.0.description>
 
-  <Clap_Normal.stages.0.label>plain clap</Clap_Normal.stages.0.label>
+  <Clap_Normal.stages.0.label>plain high five</Clap_Normal.stages.0.label>
   <Clap_Normal.stages.0.description>We shared a casual high-five. It was fine, nothing more.</Clap_Normal.stages.0.description>
 
-  <Clap_Good.stages.0.label>good clap</Clap_Good.stages.0.label>
+  <Clap_Good.stages.0.label>good high five</Clap_Good.stages.0.label>
   <Clap_Good.stages.0.description>That high-five landed just right. Not bad at all.</Clap_Good.stages.0.description>
 
-  <Clap_Perfect.stages.0.label>perfect clap</Clap_Perfect.stages.0.label>
-  <Clap_Perfect.stages.0.description>The timing was flawless - that crisp clap makes me feel unstoppable!</Clap_Perfect.stages.0.description>
+  <Clap_Perfect.stages.0.label>perfect high five</Clap_Perfect.stages.0.label>
+  <Clap_Perfect.stages.0.description>The timing was flawless - that crisp high five makes me feel unstoppable!</Clap_Perfect.stages.0.description>
 
 </LanguageData>

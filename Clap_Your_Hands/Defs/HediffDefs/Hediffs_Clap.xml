@@ -4,7 +4,7 @@
   <!-- 完美击掌的 12 小时随机增益。severity = 等级（1/2/3），时长由 HediffComp_Disappears 承载。 -->
   <HediffDef>
     <defName>Clap_Buff</defName>
-    <label>clap surge</label>
+    <label>high five rush</label>
     <description>A surge of energy from a perfect high-five.</description>
     <hediffClass>ClapYourHands.Hediff_ClapBuff</hediffClass>
     <isBad>false</isBad>
@@ -53,7 +53,7 @@
   <!-- 击掌冷却载体（24 小时），不出现在健康列表。 -->
   <HediffDef>
     <defName>Clap_Cooldown</defName>
-    <label>clap cooldown</label>
+    <label>high five cooldown</label>
     <description>Already shared a high-five recently.</description>
     <hediffClass>ClapYourHands.Hediff_ClapCooldown</hediffClass>
     <isBad>false</isBad>

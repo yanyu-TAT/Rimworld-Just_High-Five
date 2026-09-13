@@ -2,6 +2,6 @@
 <LanguageData>
 
   <!-- Body prefix of the inspiration-start letter (passed as reason by ClapUtility) -->
-  <ClapYourHands.InspirationReason>A crisp clap rang out, and {PAWN_nameDef} suddenly hit upon a good idea.</ClapYourHands.InspirationReason>
+  <ClapYourHands.InspirationReason>A crisp high five rang out, and {PAWN_nameDef} suddenly hit upon a good idea.</ClapYourHands.InspirationReason>
 
 </LanguageData>

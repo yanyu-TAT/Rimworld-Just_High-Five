@@ -18,7 +18,7 @@
     </nullifyingTraits>
     <stages>
       <li>
-        <label>bad clap</label>
+        <label>bad high five</label>
         <description>We swung our hands at each other and missed completely. How awkward...</description>
         <baseMoodEffect>-3</baseMoodEffect>
       </li>
@@ -39,7 +39,7 @@
     </nullifyingTraits>
     <stages>
       <li>
-        <label>plain clap</label>
+        <label>plain high five</label>
         <description>We shared a casual high-five. It was fine, nothing more.</description>
         <baseMoodEffect>0</baseMoodEffect>
         <baseOpinionOffset>0</baseOpinionOffset>
@@ -61,7 +61,7 @@
     </nullifyingTraits>
     <stages>
       <li>
-        <label>good clap</label>
+        <label>good high five</label>
         <description>That high-five landed just right. Not bad at all.</description>
         <baseMoodEffect>3</baseMoodEffect>
         <baseOpinionOffset>3</baseOpinionOffset>
@@ -83,8 +83,8 @@
     </nullifyingTraits>
     <stages>
       <li>
-        <label>perfect clap</label>
-        <description>The timing was flawless - that crisp clap makes me feel unstoppable!</description>
+        <label>perfect high five</label>
+        <description>The timing was flawless - that crisp high five makes me feel unstoppable!</description>
         <baseMoodEffect>10</baseMoodEffect>
         <baseOpinionOffset>5</baseOpinionOffset>
       </li>

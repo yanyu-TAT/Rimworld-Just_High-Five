@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LanguageData>
 
-  <Clap_Buff.label>clap surge</Clap_Buff.label>
+  <Clap_Buff.label>high five rush</Clap_Buff.label>
   <Clap_Buff.description>Full of drive after a perfect high-five.</Clap_Buff.description>
   <Clap_Buff.stages.0.label>Lv1</Clap_Buff.stages.0.label>
   <Clap_Buff.stages.1.label>Lv2</Clap_Buff.stages.1.label>
   <Clap_Buff.stages.2.label>Lv3</Clap_Buff.stages.2.label>
 
-  <Clap_Cooldown.label>clap cooldown</Clap_Cooldown.label>
+  <Clap_Cooldown.label>high five cooldown</Clap_Cooldown.label>
   <Clap_Cooldown.description>Already shared a high-five recently.</Clap_Cooldown.description>
 
 </LanguageData>

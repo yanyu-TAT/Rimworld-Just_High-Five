@@ -37,11 +37,10 @@
 
   <!-- Defs / Languages 中不放 C# 源码，避免被默认 glob 收编 -->
   <ItemGroup>
+    <Compile Remove="Assemblies\**" />
     <Compile Remove="Patches\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assemblies\Clap_Your_Hands.dll" />
-    <None Include="Assemblies\Clap_Your_Hands.pdb" />
+    <EmbeddedResource Remove="Assemblies\**" />
+    <None Remove="Assemblies\**" />
   </ItemGroup>
 
 </Project>
