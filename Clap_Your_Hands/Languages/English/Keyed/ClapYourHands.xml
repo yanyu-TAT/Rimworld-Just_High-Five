@@ -4,4 +4,10 @@
   <!-- Body prefix of the inspiration-start letter (passed as reason by ClapUtility) -->
   <ClapYourHands.InspirationReason>A crisp high five rang out, and {PAWN_nameDef} suddenly hit upon a good idea.</ClapYourHands.InspirationReason>
 
+  <!-- Mod settings page -->
+  <ClapYourHands.Settings.Category>Clap Your Hands</ClapYourHands.Settings.Category>
+  <ClapYourHands.Settings.Volume>Sound volume: {0}</ClapYourHands.Settings.Volume>
+  <ClapYourHands.Settings.Test>Test sound</ClapYourHands.Settings.Test>
+  <ClapYourHands.Settings.TestNeedsMap>A game map is required to test the sound.</ClapYourHands.Settings.TestNeedsMap>
+
 </LanguageData>

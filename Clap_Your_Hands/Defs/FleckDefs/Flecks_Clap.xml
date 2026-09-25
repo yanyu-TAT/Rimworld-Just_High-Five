@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- 完美击掌「黑闪」：双方中点处的闪电纹样。
+       贴图为纯白 + 透明底，随机的 4 张变体由 randomGraphics 抽取；
+       最终颜色 = 本文件的 color × 代码传入的 instanceColor（原版 Graphic_Fleck 为乘算）。 -->
+
+  <FleckDef>
+    <defName>Clap_BlackFlashBoltCore</defName>
+    <fleckSystemClass>FleckSystemStatic</fleckSystemClass>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.02</fadeInTime>
+    <solidTime>0.06</solidTime>
+    <fadeOutTime>0.3</fadeOutTime>
+    <randomGraphics>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v1</texPath>
+        <shaderType>Mote</shaderType>
+        <color>(0.45, 0.08, 0.08, 1)</color>
+        <drawSize>(1.1, 1.1)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v2</texPath>
+        <shaderType>Mote</shaderType>
+        <color>(0.45, 0.08, 0.08, 1)</color>
+        <drawSize>(1.1, 1.1)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v3</texPath>
+        <shaderType>Mote</shaderType>
+        <color>(0.45, 0.08, 0.08, 1)</color>
+        <drawSize>(1.1, 1.1)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v4</texPath>
+        <shaderType>Mote</shaderType>
+        <color>(0.45, 0.08, 0.08, 1)</color>
+        <drawSize>(1.1, 1.1)</drawSize>
+      </li>
+    </randomGraphics>
+  </FleckDef>
+
+  <FleckDef>
+    <defName>Clap_BlackFlashBoltGlow</defName>
+    <fleckSystemClass>FleckSystemStatic</fleckSystemClass>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <fadeInTime>0.02</fadeInTime>
+    <solidTime>0.06</solidTime>
+    <fadeOutTime>0.38</fadeOutTime>
+    <randomGraphics>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v1</texPath>
+        <shaderType>MoteGlow</shaderType>
+        <color>(1, 0.3, 0.16, 1)</color>
+        <drawSize>(1.4, 1.4)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v2</texPath>
+        <shaderType>MoteGlow</shaderType>
+        <color>(1, 0.3, 0.16, 1)</color>
+        <drawSize>(1.4, 1.4)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v3</texPath>
+        <shaderType>MoteGlow</shaderType>
+        <color>(1, 0.3, 0.16, 1)</color>
+        <drawSize>(1.4, 1.4)</drawSize>
+      </li>
+      <li>
+        <graphicClass>Graphic_Fleck</graphicClass>
+        <texPath>ClapYourHands/BlackFlashBolt_64_v4</texPath>
+        <shaderType>MoteGlow</shaderType>
+        <color>(1, 0.3, 0.16, 1)</color>
+        <drawSize>(1.4, 1.4)</drawSize>
+      </li>
+    </randomGraphics>
+  </FleckDef>
+
+  <!-- 溅落的火花：由 FleckSystemThrown 驱动。archHeight/archDuration 让它抛出后沿抛物线下落，
+       speedPerTime 负值充当空气阻力（飞行减速），collide 撞墙即停。 -->
+  <FleckDef>
+    <defName>Clap_HandSpark</defName>
+    <fleckSystemClass>FleckSystemThrown</fleckSystemClass>
+    <altitudeLayer>MoteOverhead</altitudeLayer>
+    <graphicData>
+      <graphicClass>Graphic_Fleck</graphicClass>
+      <texPath>ClapYourHands/ChargeSpark</texPath>
+      <shaderType>MoteGlow</shaderType>
+      <color>(1, 0.45, 0.2, 1)</color>
+      <drawSize>(0.35, 0.35)</drawSize>
+      <renderInstanced>true</renderInstanced>
+    </graphicData>
+    <fadeInTime>0.02</fadeInTime>
+    <solidTime>0.12</solidTime>
+    <fadeOutTime>0.5</fadeOutTime>
+    <archHeight>0.3~0.6</archHeight>
+    <archDuration>0.35~0.5</archDuration>
+    <speedPerTime>-3.5</speedPerTime>
+    <growthRate>-0.7</growthRate>
+    <collide>true</collide>
+  </FleckDef>
+
+</Defs>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- 完美击掌的音效：AudioGrain_Folder 会从该目录随机取一个变体。
+       音频规格：单声道 / 44100 Hz / 16-bit WAV（< 300 KB，整段解码）。 -->
+  <SoundDef>
+    <defName>Clap_HandClap</defName>
+    <context>MapOnly</context>
+    <maxSimultaneous>1</maxSimultaneous>
+    <subSounds>
+      <li>
+        <grains>
+          <li Class="AudioGrain_Folder">
+            <clipFolderPath>Clap_Your_Hands/perfect</clipFolderPath>
+          </li>
+        </grains>
+        <volumeRange>60~100</volumeRange>
+        <pitchRange>0.8~1.2</pitchRange>
+      </li>
+    </subSounds>
+  </SoundDef>
+
+</Defs>

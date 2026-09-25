@@ -4,4 +4,10 @@
   <!-- 灵感开始信件的正文前缀（由 ClapUtility 作为 reason 传入） -->
   <ClapYourHands.InspirationReason>伴随着清脆的掌声，{PAWN_nameDef}突然想到了一个好点子。</ClapYourHands.InspirationReason>
 
+  <!-- 模组设置页 -->
+  <ClapYourHands.Settings.Category>击掌</ClapYourHands.Settings.Category>
+  <ClapYourHands.Settings.Volume>音效音量：{0}</ClapYourHands.Settings.Volume>
+  <ClapYourHands.Settings.Test>试听</ClapYourHands.Settings.Test>
+  <ClapYourHands.Settings.TestNeedsMap>需要先进入游戏地图才能试听音效。</ClapYourHands.Settings.TestNeedsMap>
+
 </LanguageData>

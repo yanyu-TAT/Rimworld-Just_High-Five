@@ -10,44 +10,36 @@ namespace ClapYourHands
     {
         // ==================== 可调数值（调参入口） ====================
 
-        /// <summary>击掌在原版随机社交池中的抽取权重。原版基准：Chitchat = 1.0，DeepTalk = 0.075。</summary>
+        //击掌在原版随机社交池中的抽取权重
         public const float BaseSelectionWeight = 2.0f;
 
-        /// <summary>仇视门槛：双方好感度低于此值即不击掌（与原版 RivalOpinionThreshold 一致）。</summary>
+        //仇视门槛
         public const int HostileOpinionThreshold = -20;
 
-        /// <summary>冷却判定是否要求双方都冷却完毕；false = 有一人冷却完毕即可。</summary>
-        public const bool CooldownRequiresBoth = false;
+        //增益持续时间
+        public const int BuffDurationTicks = GenDate.TicksPerHour * 12;
 
-        /// <summary>1 天 = 60000 ticks。</summary>
-        private const int TicksPerDay = 60000;
+        //击掌冷却
+        public const int CooldownTicks = GenDate.TicksPerDay;
 
-        /// <summary>完美击掌的增益持续 12 小时。</summary>
-        public const int BuffDurationTicks = TicksPerDay / 2;
-
-        /// <summary>击掌冷却 24 小时。</summary>
-        public const int CooldownTicks = TicksPerDay;
-
-        /// <summary>结果基础权重：糟糕 / 普通 / 不错 / 完美（好感度为 0 时即 10% / 30% / 50% / 10%）。</summary>
+        //结果基础权重
         private static readonly float[] BaseOutcomeWeights = { 10f, 30f, 50f, 10f };
 
-        /// <summary>全部结果档位。</summary>
+        //全部结果档位
         private static readonly ClapOutcome[] AllOutcomes =
         {
             ClapOutcome.Bad, ClapOutcome.Normal, ClapOutcome.Good, ClapOutcome.Perfect,
         };
 
-        /// <summary>完美击掌奖励分支权重：S / SS / SSS / 灵感。</summary>
+        //完美击掌奖励分支权重
         private static readonly float[] PerfectRewardWeights = { 50f, 30f, 15f, 5f };
 
-        /// <summary>完美击掌的奖励分支（<c>(int)branch + 1</c> 即增益等级）。</summary>
+        //完美击掌的奖励分支
         private static readonly PerfectRewardBranch[] AllRewardBranches =
         {
             PerfectRewardBranch.S, PerfectRewardBranch.SS,
             PerfectRewardBranch.SSS, PerfectRewardBranch.Inspiration,
         };
-
-        /// <summary>完美击掌的奖励分支。</summary>
         private enum PerfectRewardBranch
         {
             S = 0,
@@ -56,7 +48,7 @@ namespace ClapYourHands
             Inspiration = 3,
         }
 
-        /// <summary>好感度 → 正面档（不错 / 完美）权重倍率。</summary>
+        //好感度对正面效果权重影响
         private static readonly SimpleCurve PositiveWeightFactor = new()
         {
             new CurvePoint(-100f, 0.5f),
@@ -64,7 +56,7 @@ namespace ClapYourHands
             new CurvePoint(100f, 1.5f),
         };
 
-        /// <summary>好感度 → 负面档（糟糕）权重倍率。</summary>
+        //好感度对负面效果权重影响
         private static readonly SimpleCurve NegativeWeightFactor = new()
         {
             new CurvePoint(0f, 1f),
@@ -147,7 +139,7 @@ namespace ClapYourHands
         {
             bool aReady = !IsOnCooldown(a);
             bool bReady = !IsOnCooldown(b);
-            return CooldownRequiresBoth ? (aReady && bReady) : (aReady || bReady);
+            return aReady || bReady;
         }
 
         // ==================== 结果抽取与结算 ====================

@@ -1,5 +1,6 @@
 using RimWorld;
 using Verse;
+using Verse.Sound;
 
 namespace ClapYourHands
 {
@@ -14,6 +15,10 @@ namespace ClapYourHands
         public static ThoughtDef Clap_Perfect;
         public static HediffDef Clap_Buff;
         public static HediffDef Clap_Cooldown;
+        public static FleckDef Clap_BlackFlashBoltCore;
+        public static FleckDef Clap_BlackFlashBoltGlow;
+        public static FleckDef Clap_HandSpark;
+        public static SoundDef Clap_HandClap;
 
         static ClapDefOf()
         {

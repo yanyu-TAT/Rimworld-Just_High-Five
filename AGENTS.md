@@ -158,14 +158,20 @@
 | `ClapOutcome.cs` | 击掌结果档位枚举（枚举值同时是权重数组下标） |
 | `ClapUtility.cs` | **核心逻辑**：抽取权重、好感度曲线（`SimpleCurve`）、结果抽取、结算应用、可用手判定（`TryGetHand`）、增益与冷却写入。**所有可调数值集中在本文件顶部** |
 | `InteractionWorker_Clap.cs` | 原版扩展点：`RandomSelectionWeight`（触发权重与排除）+ `Interacted`（结算入口） |
+| `ClapEffects.cs` | 完美击掌的 Fleck 表现：双方中点处的闪电纹样（核心 + 外发光两层）与溅落火花；音效播放与试听 |
+| `ClapSettings.cs` | 模组设置页（`ModSettings`）：音效音量缩放滑块（0%~100%）+ 试听按钮；`ClapYourHandsMod.Settings` 静态可读 |
 | `Hediff_ClapBuff.cs` | 12h 增益载体：等级合并（取最高／同级覆盖时长）；时长用原版 `HediffComp_Disappears.SetDuration` |
 | `Hediff_ClapCooldown.cs` | 24h 冷却载体：`Visible => false` 隐藏；时长同样用 `HediffComp_Disappears` |
 | `ClapDebug.cs` | 开发期调试开关（静态 bool，**不参与存档**）；`WeightMultiplier` 常量 |
-| `DebugTabMenu_Clap.cs` | 把 `ClapDebug` 的静态开关**并入原版 settings 分页**（复用共享的 `absRoot`，归类到 `Clap` 分类；复选框由 `DebugActionNode.settingsField` 渲染） |
+| `DebugTabMenu_ClapSettings.cs` | 把 `ClapDebug` 的静态开关**并入原版 settings 分页**（复用共享的 `absRoot`，归类到 `Clap` 分类；复选框由 `DebugActionNode.settingsField` 渲染） |
 | `Defs/DebugTabMenuDefs/` | `DebugTabMenuDef`（注册入口；零补丁限制：分页栏会随之多一个 tab，其内容复用原版 Settings 节点） |
 | `Defs/InteractionDefs/` | 互动定义（`Clap`） |
 | `Defs/ThoughtDefs/` | 四档结果想法（Social；`baseMoodEffect` + `baseOpinionOffset`） |
 | `Defs/HediffDefs/` | `Clap_Buff`（3 级增益）、`Clap_Cooldown`（隐藏冷却） |
+| `Defs/FleckDefs/` | 黑闪闪电纹样（`Clap_BlackFlashBoltCore` / `Clap_BlackFlashBoltGlow`，各含 4 张随机贴图变体）与溅落火花 `Clap_HandSpark`（`FleckSystemThrown`，抛物线拱 + 空气阻力） |
+| `Defs/SoundDefs/` | `Clap_HandClap`：完美击掌音效，`AudioGrain_Folder` 从 `Sounds/Clap_Your_Hands/` 随机取变体 |
+| `Textures/ClapYourHands/` | 闪电纹样 4 变体（程序化生成，脚本 `tools/gen_clap_fleck.py`）与火花 `ChargeSpark`（均为白色 + 透明底，靠 `color` 染色） |
+| `Sounds/Clap_Your_Hands/` | 完美击掌音效素材（单声道 44.1 kHz 16-bit WAV；**同目录只放同一效果的变体**，`AudioGrain_Folder` 会全量随机） |
 | `Languages/` | 中英逐键对称的本地化文本 |
 
 > 新增模块/文件时同步更新本表。

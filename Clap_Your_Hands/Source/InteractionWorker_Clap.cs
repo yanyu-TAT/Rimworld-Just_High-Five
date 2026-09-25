@@ -10,24 +10,32 @@ namespace ClapYourHands
     /// </summary>
     public class InteractionWorker_Clap : InteractionWorker
     {
-        /// <summary>触发权重。本方法会被高频调用，需保持廉价、无副作用。</summary>
+        /// <summary>
+        /// 抽取权重。几何门禁（距离、视线）由原版 <c>Pawn_InteractionsTracker.CanInteractNowWith</c> 负责，
+        /// 不在此重复校验；这里只表达击掌自身的规则。
+        /// 抽取时按「每个候选 × 每个 InteractionDef」各调用一次，判定顺序为成本从低到高。
+        /// </summary>
         public override float RandomSelectionWeight(Pawn initiator, Pawn recipient)
         {
             if (initiator.Inhumanized())
                 return 0f;
 
-            // 没有可用的手就击不了掌（双方都至少需要一只）
-            if (!ClapUtility.TryGetHand(initiator, out _) || !ClapUtility.TryGetHand(recipient, out _))
+            //双手未被占用
+            if (initiator.IsCarryingPawn() || recipient.IsCarryingPawn())
                 return 0f;
 
-            // 敌对 / 仇视关系不互动（敌对另由原版 pawn.HostileTo 排除）
-            if (ClapUtility.IsHostileRelation(initiator, recipient))
-                return 0f;
-
+            //检查冷却
             if (!ClapUtility.CanClapNow(initiator, recipient))
                 return 0f;
 
-            // 好感度不影响抽取权重，只影响结果概率
+            //非仇视
+            if (ClapUtility.IsHostileRelation(initiator, recipient))
+                return 0f;
+
+            //双方都至少需要一只可用的手
+            if (!ClapUtility.TryGetHand(initiator, out _) || !ClapUtility.TryGetHand(recipient, out _))
+                return 0f;
+
             return ClapDebug.MoreClapHands
                 ? ClapUtility.BaseSelectionWeight * ClapDebug.WeightMultiplier
                 : ClapUtility.BaseSelectionWeight;
@@ -55,6 +63,7 @@ namespace ClapYourHands
             {
                 ClapUtility.ApplyPerfectReward(initiator);
                 ClapUtility.ApplyPerfectReward(recipient);
+                ClapEffects.PlayPerfect(initiator, recipient);
             }
 
             // 双方各自进入 24 小时冷却
