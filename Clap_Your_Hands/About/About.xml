@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE ModMetaData>
 <ModMetaData>
-    <name>Clap Your Hands</name>
+    <name>Just High-Five</name>
     <author>yanyu</author>
     <description>这个模组加入了新的社交互动：击掌。</description>
     <packageId>yanyu.clapyourhands</packageId>
