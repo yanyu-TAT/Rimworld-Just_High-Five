@@ -28,6 +28,8 @@ namespace ClapYourHands
  * - [x] 添加互动效果、情绪及对应的增益效果
  * - [x] 添加完成完美击掌时的特效和音效
  * - [x] 添加模组设置项（音效音量缩放）
+ * - [ ] 添加手动进行击掌的功能（可能需要Harmony依赖）
+ * - [ ] 提供对于perspective shift和first person rim的支持
  */
 
 /* Develop Log:

@@ -1,19 +1,23 @@
 # AGENTS.md — AI 编程助手指南
 
+> **共享知识库 `kb/` 的位置**：`D:\CODE\rim\kb\`。本项目根目录下的 `kb/` 是指向该目录的**目录联接**（junction），因此 `kb/...` 与 `..\kb\...` 两种写法等价，**不是**项目内的独立副本。
+>
+> ⚠ **沙盒边界与提权**：以本项目目录为工作区的会话对 `kb/` **只读** —— 沙盒按真实路径判定工作区，经联接的写入落在工作区外会被拒绝。需要写入 kb（反编译输出、知识条目、文档）时，在**该次工具调用**上申请提权：`sandbox_permissions: danger-full-access` + `justification` 说明用途（如「向共享知识库 kb 写入反编译输出」）；每次写入单独申请，不静默落盘、不把内容写进项目目录冒充已入库。
+
 > 本文件为本项目 AI 编程规范的**权威源**。详细规则见 `docs/B/B-01-开发规范.md`；原版 API 证据见 `docs/C/C-05-原版API简述.md`；长期事实与约定见 `docs/C/C-03-项目长期记忆.md`。
 
 ***
 
 ## 一、项目身份
 
-**Clap Your Hands** — RimWorld 1.6 社交互动扩展模组。为殖民者加入「击掌」互动：四档结果（糟糕/普通/不错/完美）带来不同情绪与好感度变化，完美击掌额外给予 12 小时随机增益。
+**Clap Your Hands** — RimWorld 1.7 社交互动扩展模组（兼容 1.6）。为殖民者加入「击掌」互动：四档结果（糟糕/普通/不错/完美）带来不同情绪与好感度变化，完美击掌额外给予 12 小时随机增益。
 
 | 项    | 值                                                                          |
 | ---- | -------------------------------------------------------------------------- |
 | 模组名  | Clap Your Hands                                                            |
 | 包 ID | `yanyu.clapyourhands`                                                      |
-| 语言   | C# 10 / .NET Framework 4.7.2（`net472`，`LangVersion 10.0`）                   |
-| 游戏   | RimWorld 1.6（`Assembly-CSharp`）+ Unity（`UnityEngine.CoreModule`）            |
+| 语言   | C# 10 / .NET 10（`net10.0`，`LangVersion 10.0`）                   |
+| 游戏   | RimWorld 1.7（`Assembly-CSharp`，.NET 10）+ 引擎兼容桩 `UnityStubs`            |
 | 依赖   | **零第三方依赖** — 不使用 Harmony、不使用 HugsLib（见「四、架构核心」）                             |
 | 模组主类 | `ClapYourHands.ClapYourHandsMod`（原版 `Verse.Mod`），在 `About.xml` 的 `modClass` 中声明 |
 | 输出   | SDK 风格 csproj，`OutputPath` 直出 `Clap_Your_Hands/Assemblies/Clap_Your_Hands.dll` |
@@ -31,12 +35,12 @@
 | ------ | --------------------------------------------------------------------- |
 | 编译     | `dotnet build Clap_Your_Hands/Clap_Your_Hands.csproj`（输出直写 `Assemblies/`） |
 | 清理构建产物 | 运行 `11.bat`                                                           |
-| 覆盖游戏路径 | `dotnet build ... -p:RimWorldManagedDir="<Managed 目录>"`                 |
-| 反编译原版  | `ilspycmd` 输出到 `decompiledFiles/`（布局规范见「十、文档维护」）                       |
+| 覆盖游戏路径 | `dotnet build ... -p:RimWorldDir="<游戏根目录>"`                         |
+| 反编译原版  | `ilspycmd` 输出到 `..\kb\L0-证据/decompiled/<版本>/`（布局规范见 `..\kb\L0-证据/decompiled/README.md`） |
 | 检查 XML | PowerShell `[xml](Get-Content <file>)` 解析验证                           |
 | 游戏日志   | 游戏目录 `Player.log`（检索前缀 `[ClapYourHands]`）                             |
 
-> 游戏程序集引用路径为 Steam 本地目录（见 csproj 属性 `RimWorldManagedDir`），CI 上不可编译；构建与测试均在本机完成。
+> 游戏程序集引用路径为 Steam 本地目录（见 csproj 属性 `RimWorldDir`，1.7 起原版程序集直接在游戏根目录），CI 上不可编译；构建与测试均在本机完成。
 
 ***
 
@@ -44,13 +48,13 @@
 
 **Allowed**：`Clap_Your_Hands/Source/`、`Defs/`、`Patches/`、`Languages/`、`Textures/`、`docs/`、XML 文件。
 **Ask First**：csproj 程序集引用变更、`About.xml` 依赖/版本变更、破坏性重构、新增第三方依赖。
-**Never Touch**：`decompiledFiles/` 中内容（只读参考）、游戏 `Data/` 原版 XML、第三方 DLL、`Player.log`（仅读取分析）。
+**Never Touch**：`..\kb\L0-证据/decompiled/` 中内容（只读参考）、游戏 `Data/` 原版 XML、第三方 DLL、`Player.log`（仅读取分析）。
 
 ***
 
 ## 四、架构核心：零补丁原则（本项目最重要）
 
-本模组**刻意不使用任何 Harmony 补丁**。原版 1.6 已提供完整扩展点，全部功能应在官方虚方法/Def 内实现：
+本模组**刻意不使用任何 Harmony 补丁**。原版 1.6/1.7 已提供完整扩展点，全部功能应在官方虚方法/Def 内实现：
 
 ```
 ✅ 新增 InteractionDef + 自定义 InteractionWorker → 自动进入原版随机社交池
@@ -145,7 +149,7 @@
 - 分支：`main` 唯一常驻，正式版本用 tag 发布（版本号见 `About.xml`）
 - 提交：中文描述，一句话说清变更（如 `添加了击掌互动` / `修复了X` / `重构了X`）
 - ❌ `git push --force` / `git reset --hard`
-- ❌ 提交 `Assemblies/` 第三方 DLL、`obj/`、`decompiledFiles/`、`Player.log`、临时文件（`.gitignore` 已覆盖）
+- ❌ 提交 `Assemblies/` 第三方 DLL、`obj/`、`Player.log`、临时文件（`.gitignore` 已覆盖）
 
 ***
 
@@ -192,7 +196,7 @@
 - **维护范围**：`docs/` 目录下的文件与根目录 `AGENTS.md`。
 - **不加时间戳**：维护文档时不在文件头部添加或更新「更新: 日期」之类的时间戳。
 - **计划文件统一存放 `plans/`**：开发计划一律放 `plans/`，不散落在 `docs/` 或工具目录。**计划仅为阶段性思路参考，其中的代码/数值/接口可能与最终实现存在差异，落地一律以 `Source/` `Defs/` 实际代码与用户确认为准。**
-- **反编译文件管理**：`ilspycmd` 输出统一到 `decompiledFiles/`，按「命名空间目录 + 类型名文件」存放；该目录不提交 git、不参与构建、不得当作作品代码改动。
+- **反编译文件管理**：全项目共用的反编译库在 `..\kb\L0-证据/decompiled/`（按游戏版本分目录、命名空间目录 + 类型名文件）；项目内不再生成 `decompiledFiles/`。该库只读参考、不提交到项目仓库、不参与构建、不得当作作品代码改动；增补与去重规范见 `..\kb\L0-证据/decompiled/README.md`。
 - **中文思考链**：始终使用中文输出思考链，便于与用户协作审阅。
 - **疑问即问**：对用户的要求或说明有疑惑时直接提问确认；不猜测、不否定。
 - **结论需证据**：给出任何结论前先查证（反编译优先）；无证据时明确标注「无证据/未经验证」。

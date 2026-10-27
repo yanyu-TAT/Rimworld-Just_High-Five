@@ -27,3 +27,6 @@ plans/
 .dsh-pyenv/
 .dsh-dotnet/
 .venv/
+
+# 共享知识库（目录联接，指向 ..\kb，不跟踪）
+kb/

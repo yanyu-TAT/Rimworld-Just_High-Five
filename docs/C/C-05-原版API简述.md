@@ -1,9 +1,10 @@
 # 原版 API 简述（反编译证据库）
 
-> 本文件按系统分类收录 RimWorld 1.6 的**已核实** API 事实（来源：`ilspycmd` 反编译）。
+> 本文件按系统分类收录 RimWorld 1.7 的**已核实** API 事实（来源：`ilspycmd` 反编译；1.6 结论经 1.7 引擎桥接后仍适用，标注保留）。
 > 每条结论标注来源类型，未经验证的内容必须显式标注「无证据」。持续扩充。
 
-环境基准：RimWorld 1.6，程序集 `Assembly-CSharp.dll`（Steam 本地安装）。
+环境基准：RimWorld 1.7，程序集 `Assembly-CSharp.dll`（Steam 本地安装，1.7 起位于游戏根目录，目标框架 `.NET 10`）；Unity API 由引擎兼容桩 `UnityStubs.dll` 提供。
+证据路径：`kb/L0-证据/decompiled/1.6/`、`kb/L0-证据/decompiled/1.7/`（项目现有反编译库为 **1.7**；文中标注“1.6”的结论需以 1.6 库复核后确认）。
 
 ***
 
@@ -502,7 +503,7 @@ SoundDef XML 模板（原版 `RitualConclusion_Positive`）：
 
 **结论 9**：`AudioGrain_Clip` 指向单个文件，`AudioGrain_Folder` 指向文件夹（随机取一个，适合多音效变体避免听腻）；`onCamera` 控制是否只在镜头内播放。
 
-### 5.1 音频格式与加载机制（来源：`Verse/ModContentLoader.cs`、`Verse/ModAssetBundlesHandler.cs`、`Verse/ContentFinder.cs`，本项目 1.6 反编译）
+### 5.1 音频格式与加载机制（来源：`Verse/ModContentLoader.cs`、`Verse/ModAssetBundlesHandler.cs`、`Verse/ContentFinder.cs`，本项目反编译，库为 1.7）
 
 **格式白名单（硬约束，写别的扩展名会被直接忽略）**：
 
@@ -631,7 +632,7 @@ soundDef.PlayOneShot(info);
 **结论 11（踩坑点）**：需要 `velocity` 迸溅方向的特效**必须用 `Verse.FleckSystemThrown`**；`FleckSystemStatic` 下 `data.velocity` 不生效。
 可选 `fleckSystemClass`：`Verse.FleckSystemStatic` / `FleckSystemThrown` / `FleckSystemSplash`；常用 `graphicClass`：`Graphic_Fleck` / `Graphic_FleckPulse` / `Graphic_FleckSplash`。
 
-### 6.4.1 Fleck 运行时契约（来源：`Verse/Graphic_Fleck.cs`、`Verse/FleckCreationData.cs`、`Verse/FleckManager.cs`、`Verse/FleckStatic.cs`、`Verse/FleckDef.cs`、`RimWorld/FleckMaker.cs`，本项目 1.6 反编译）
+### 6.4.1 Fleck 运行时契约（来源：`Verse/Graphic_Fleck.cs`、`Verse/FleckCreationData.cs`、`Verse/FleckManager.cs`、`Verse/FleckStatic.cs`、`Verse/FleckDef.cs`、`RimWorld/FleckMaker.cs`，本项目反编译，库为 1.7）
 
 **自定义 Fleck 的低层入口**（`FleckMaker.Static(...)` 不支持旋转与染色，只能用它做最简静态粒子）：
 
@@ -654,7 +655,7 @@ map.flecks.CreateFleck(data);
 **结论 11.1**：想让「同一张图每次不一样」，正确做法是 `randomGraphics`（多张贴图变体）**或**运行时随机 `rotation`；两者都不需要为每个变体单独写 `FleckDef`。
 **结论 11.2**：Fleck 的创建**没有任何门禁** —— 任意代码可在任意位置生成，位置合理性由调用方自行保证（如自定义效果应先判 `ShouldSpawnMotesAt` 与双方是否同图）。
 
-### 6.4.2 Fleck 的抛物线飞行与落地（来源：`Verse/FleckThrown.cs`、`Verse/FleckStatic.cs`、`Verse/FleckDrawPosition.cs`，本项目 1.6 反编译）
+### 6.4.2 Fleck 的抛物线飞行与落地（来源：`Verse/FleckThrown.cs`、`Verse/FleckStatic.cs`、`Verse/FleckDrawPosition.cs`，本项目反编译，库为 1.7）
 
 只有 `fleckSystemClass = FleckSystemThrown` 走物理；`FleckSystemStatic` 的 `TimeInterval` 完全不做位移（只老化和缩放）。
 
@@ -743,7 +744,7 @@ public class CameraShaker {
 
 ## 七、实现落地期补充核实
 
-来源：`RimWorld/DefOfHelper.cs`、`Verse/HediffMaker.cs`、`Verse/Pawn_HealthTracker.cs`（本项目用 `ilspycmd` 反编译，存于 `decompiledFiles/`）
+来源：`RimWorld/DefOfHelper.cs`、`Verse/HediffMaker.cs`、`Verse/Pawn_HealthTracker.cs`（本项目用 `ilspycmd` 反编译，存于 `kb/L0-证据/decompiled/1.7/`）
 
 ### 7.1 DefOf 模式
 
@@ -784,7 +785,7 @@ public class Pawn_HealthTracker
 
 ### 7.3 `HediffComp_Disappears`（定时消失组件）
 
-来源：`Verse/HediffComp_Disappears.cs`、`Verse/HediffCompProperties_Disappears.cs`（本项目 1.6 反编译，存于 `decompiledFiles/Verse/`）
+来源：`Verse/HediffComp_Disappears.cs`、`Verse/HediffCompProperties_Disappears.cs`（本项目反编译，库为 1.7，存于 `kb/L0-证据/decompiled/1.7/Verse/`）
 
 ```csharp
 public class HediffComp_Disappears : HediffComp
@@ -836,7 +837,7 @@ public class HediffCompProperties_Disappears : HediffCompProperties
 
 ## 八、开发者菜单（Debug）扩展
 
-来源：`LudeonTK/DebugActionAttribute.cs`、`DebugActionType.cs`、`DebugMenuOption.cs`、`Dialog_DebugOptionListLister.cs`（本项目 1.6 反编译）
+来源：`LudeonTK/DebugActionAttribute.cs`、`DebugActionType.cs`、`DebugMenuOption.cs`、`Dialog_DebugOptionListLister.cs`（本项目反编译，库为 1.7）
 
 ```csharp
 namespace LudeonTK;   // ← DebugAction 系列在 LudeonTK 命名空间
@@ -1100,7 +1101,7 @@ if (hediff.Part != null && !GetNotMissingParts().Contains(hediff.Part))
 
 ## 十、模组设置项（ModSettings）
 
-来源：`Verse/Mod.cs`、`Verse/ModSettings.cs`、`RimWorld/Dialog_ModSettings.cs`、`RimWorld/Page_ModsConfig.cs`、`Verse/Widgets.cs`、`Verse.Sound/Sample.cs`、`Verse.Sound/SampleOneShot.cs`、`Verse.Sound/SoundInfo.cs`、`Verse/AudioSourceUtility.cs`（本项目 1.6 反编译）
+来源：`Verse/Mod.cs`、`Verse/ModSettings.cs`、`RimWorld/Dialog_ModSettings.cs`、`RimWorld/Page_ModsConfig.cs`、`Verse/Widgets.cs`、`Verse.Sound/Sample.cs`、`Verse.Sound/SampleOneShot.cs`、`Verse.Sound/SoundInfo.cs`、`Verse/AudioSourceUtility.cs`（本项目反编译，库为 1.7）
 
 ### 10.1 三件套与入口条件
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
@@ -16,21 +16,24 @@
     <OutputPath>$(MSBuildThisFileDirectory)Assemblies\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
   </PropertyGroup>
 
-  <!-- 游戏程序集路径：本机 Steam 安装目录，可用 -p:RimWorldManagedDir=... 覆盖 -->
+  <!-- 游戏程序集路径：RimWorld 1.7 起原版程序集位于游戏根目录，可用 -p:RimWorldDir=... 覆盖 -->
   <PropertyGroup>
-    <RimWorldManagedDir Condition="'$(RimWorldManagedDir)' == ''">D:\steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed</RimWorldManagedDir>
+    <RimWorldDir Condition="'$(RimWorldDir)' == ''">D:\steam\steamapps\common\RimWorld</RimWorldDir>
+    <!-- 兼容旧参数 RimWorldManagedDir -->
+    <RimWorldDir Condition="'$(RimWorldManagedDir)' != ''">$(RimWorldManagedDir)</RimWorldDir>
   </PropertyGroup>
 
-  <!-- 只保留最小必需引用：原版代码 + Unity 核心模块（零第三方依赖） -->
+  <!-- 只保留最小必需引用：原版代码 + Unity 兼容桩（零第三方依赖） -->
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>$(RimWorldManagedDir)\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(RimWorldDir)\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(RimWorldManagedDir)\UnityEngine.CoreModule.dll</HintPath>
+    <Reference Include="UnityStubs">
+      <HintPath>$(RimWorldDir)\UnityStubs.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
