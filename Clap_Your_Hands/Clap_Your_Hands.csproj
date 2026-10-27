@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFrameworks>net472;net10.0</TargetFrameworks>
     <LangVersion>10.0</LangVersion>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>disable</Nullable>
@@ -9,41 +9,103 @@
     <RootNamespace>ClapYourHands</RootNamespace>
     <DebugType>portable</DebugType>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-  </PropertyGroup>
-
-  <!-- 构建产物直出 mod 目录下的 Assemblies/，供游戏直接加载 -->
-  <PropertyGroup>
-    <OutputPath>$(MSBuildThisFileDirectory)Assemblies\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
     <GenerateDependencyFile>false</GenerateDependencyFile>
+    <!-- 两个目标框架的中间目录隔离，避免并行构建互相覆盖 -->
+    <IntermediateOutputPath>obj\$(Configuration)\$(TargetFramework)\</IntermediateOutputPath>
+    <BuildInParallel>false</BuildInParallel>
   </PropertyGroup>
 
-  <!-- 游戏程序集路径：RimWorld 1.7 起原版程序集位于游戏根目录，可用 -p:RimWorldDir=... 覆盖 -->
-  <PropertyGroup>
-    <RimWorldDir Condition="'$(RimWorldDir)' == ''">D:\steam\steamapps\common\RimWorld</RimWorldDir>
-    <!-- 兼容旧参数 RimWorldManagedDir -->
-    <RimWorldDir Condition="'$(RimWorldManagedDir)' != ''">$(RimWorldManagedDir)</RimWorldDir>
+  <!-- RimWorld 1.6（Mono / .NET Framework 4.7.2） -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net472'">
+    <OutputPath>$(MSBuildThisFileDirectory)1.6\Assemblies\</OutputPath>
+    <DefineConstants>$(DefineConstants);RW16</DefineConstants>
   </PropertyGroup>
 
-  <!-- 只保留最小必需引用：原版代码 + Unity 兼容桩（零第三方依赖） -->
+  <!-- RimWorld 1.7（CoreCLR / .NET 10） -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <OutputPath>$(MSBuildThisFileDirectory)1.7\Assemblies\</OutputPath>
+    <DefineConstants>$(DefineConstants);RW17</DefineConstants>
+  </PropertyGroup>
+
+  <!-- 版本目录只放构建产物，不参与源码 glob -->
   <ItemGroup>
+    <Compile Remove="1.6\**" />
+    <Compile Remove="1.7\**" />
+    <Compile Remove="Assemblies\**" />
+    <Compile Remove="Patches\**" />
+    <EmbeddedResource Remove="1.6\**" />
+    <EmbeddedResource Remove="1.7\**" />
+    <None Remove="1.6\**" />
+    <None Remove="1.7\**" />
+  </ItemGroup>
+
+  <!-- 1.6 引用：lib\1.6（本机副本，不入库） -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="Assembly-CSharp">
-      <HintPath>$(RimWorldDir)\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\lib\1.6\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
     </Reference>
-    <Reference Include="UnityStubs">
-      <HintPath>$(RimWorldDir)\UnityStubs.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="UnityEngine">
+      <HintPath>..\lib\1.6\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\lib\1.6\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\lib\1.6\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\lib\1.6\UnityEngine.IMGUIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\lib\1.6\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\lib\1.6\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIElementsModule">
+      <HintPath>..\lib\1.6\UnityEngine.UIElementsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\lib\1.6\UnityEngine.ImageConversionModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="netstandard">
+      <HintPath>..\lib\1.6\netstandard.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- 用 Mono 的 mscorlib 覆盖 targeting pack 版本 -->
+    <Reference Include="mscorlib">
+      <HintPath>..\lib\1.6\mscorlib.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
-  <!-- Defs / Languages 中不放 C# 源码，避免被默认 glob 收编 -->
-  <ItemGroup>
-    <Compile Remove="Assemblies\**" />
-    <Compile Remove="Patches\**" />
-    <EmbeddedResource Remove="Assemblies\**" />
-    <None Remove="Assemblies\**" />
+  <!-- 1.7 引用：lib\1.7（本机副本，不入库） -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\lib\1.7\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityStubs">
+      <HintPath>..\lib\1.7\UnityStubs.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Waylith">
+      <HintPath>..\lib\1.7\Waylith.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
 </Project>

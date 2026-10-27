@@ -9,5 +9,21 @@
   <ClapYourHands.Settings.Volume>音效音量：{0}</ClapYourHands.Settings.Volume>
   <ClapYourHands.Settings.Test>试听</ClapYourHands.Settings.Test>
   <ClapYourHands.Settings.TestNeedsMap>需要先进入游戏地图才能试听音效。</ClapYourHands.Settings.TestNeedsMap>
+  <ClapYourHands.Settings.VolumeGroup>音效</ClapYourHands.Settings.VolumeGroup>
+  <ClapYourHands.Settings.ManualClapGroup>手动击掌</ClapYourHands.Settings.ManualClapGroup>
+  <ClapYourHands.Settings.JudgeDuration>击掌判定时间：{0} 秒</ClapYourHands.Settings.JudgeDuration>
+
+  <!-- 手动击掌 -->
+  <ClapYourHands.ManualClap.Menu>和 {0} 击掌</ClapYourHands.ManualClap.Menu>
+  <ClapYourHands.ManualClap.MenuCooldown>和 {0} 击掌（冷却中，不产生效果）</ClapYourHands.ManualClap.MenuCooldown>
+  <ClapYourHands.ManualClap.MenuNoHands>和 {0} 击掌（{1} 没有可用的手）</ClapYourHands.ManualClap.MenuNoHands>
+  <ClapYourHands.ManualClap.MenuHostile>和 {0} 击掌（关系太差）</ClapYourHands.ManualClap.MenuHostile>
+  <ClapYourHands.ManualClap.NoHands>{0} 没有可用的手，击掌失败</ClapYourHands.ManualClap.NoHands>
+  <ClapYourHands.ManualClap.OnCooldown>冷却中，这次击掌没有产生效果。</ClapYourHands.ManualClap.OnCooldown>
+  <ClapYourHands.Rhythm.Click>点击进行击掌！</ClapYourHands.Rhythm.Click>
+  <ClapYourHands.Rhythm.Bad>糟糕</ClapYourHands.Rhythm.Bad>
+  <ClapYourHands.Rhythm.Normal>一般</ClapYourHands.Rhythm.Normal>
+  <ClapYourHands.Rhythm.Good>不错</ClapYourHands.Rhythm.Good>
+  <ClapYourHands.Rhythm.Perfect>完美</ClapYourHands.Rhythm.Perfect>
 
 </LanguageData>

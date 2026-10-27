@@ -1,8 +1,10 @@
 # 构建产物与第三方程序集
 obj/
 bin/
-Clap_Your_Hands/Assemblies/*
-!Clap_Your_Hands/Assemblies/Clap_Your_Hands.dll
+Clap_Your_Hands/1.6/Assemblies/*
+Clap_Your_Hands/1.7/Assemblies/*
+!Clap_Your_Hands/1.6/Assemblies/Clap_Your_Hands.dll
+!Clap_Your_Hands/1.7/Assemblies/Clap_Your_Hands.dll
 
 # 参考资料（原版 XML / 反编译输出 / 第三方 DLL）
 Data/

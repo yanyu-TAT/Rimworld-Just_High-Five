@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- 手动击掌：走到对方身边后进入音游判定。 -->
+  <JobDef>
+    <defName>Clap_ManualClap</defName>
+    <driverClass>ClapYourHands.JobDriver_ClapWith</driverClass>
+    <reportString>high-fiving {0}.</reportString>
+    <playerInterruptible>true</playerInterruptible>
+    <casualInterruptible>true</casualInterruptible>
+    <suspendable>true</suspendable>
+  </JobDef>
+
+</Defs>

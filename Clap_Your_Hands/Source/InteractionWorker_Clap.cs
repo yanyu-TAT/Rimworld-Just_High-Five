@@ -56,19 +56,7 @@ namespace ClapYourHands
                 return;
             }
 
-            var outcome = ClapUtility.RollOutcome(initiator, recipient);
-            ClapUtility.ApplyOutcome(initiator, recipient, outcome);
-
-            if (outcome == ClapOutcome.Perfect)
-            {
-                ClapUtility.ApplyPerfectReward(initiator);
-                ClapUtility.ApplyPerfectReward(recipient);
-                ClapEffects.PlayPerfect(initiator, recipient);
-            }
-
-            // 双方各自进入 24 小时冷却
-            ClapUtility.ApplyCooldown(initiator);
-            ClapUtility.ApplyCooldown(recipient);
+            ClapUtility.ApplyClapResult(initiator, recipient, ClapUtility.RollOutcome(initiator, recipient), true);
         }
     }
 }

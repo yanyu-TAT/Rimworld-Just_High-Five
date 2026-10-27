@@ -3,7 +3,7 @@
 > 本文件按系统分类收录 RimWorld 1.7 的**已核实** API 事实（来源：`ilspycmd` 反编译；1.6 结论经 1.7 引擎桥接后仍适用，标注保留）。
 > 每条结论标注来源类型，未经验证的内容必须显式标注「无证据」。持续扩充。
 
-环境基准：RimWorld 1.7，程序集 `Assembly-CSharp.dll`（Steam 本地安装，1.7 起位于游戏根目录，目标框架 `.NET 10`）；Unity API 由引擎兼容桩 `UnityStubs.dll` 提供。
+环境基准：RimWorld 1.6（Mono / .NET Framework 4.7.2，Unity 类型来自 `UnityEngine.CoreModule` 等模块）与 1.7（CoreCLR / .NET 10，Unity 类型来自引擎兼容桩 `UnityStubs`）双版本；本模组做双目标构建（`net472;net10.0`）。
 证据路径：`kb/L0-证据/decompiled/1.6/`、`kb/L0-证据/decompiled/1.7/`（项目现有反编译库为 **1.7**；文中标注“1.6”的结论需以 1.6 库复核后确认）。
 
 ***
@@ -1171,3 +1171,61 @@ Sample.Volume = resolvedVolume * Info.volumeFactor * MappedVolumeMultiplier * Co
 | `testPlay` 同时绕过上下文检查 | `Sample.cs:75`：`TestPlaying \|\| CorrectContextNow(...)` |
 
 **结论 35**：自定义音效的音量设置项 = `SoundInfo.volumeFactor`；试听 = `SoundInfo.InMap(镜头中心 cell)` + `testPlay = true`（不要用 `PlayOneShotOnCamera`，它会因缺少 `onCamera` subSound 而 `Log.Error`，且位置无效）。
+
+***
+
+## 十一、手动击掌相关（1.7 实测）
+
+### 11.1 浮动菜单扩展
+
+| 事实 | 说明 |
+| --- | --- |
+| provider 自动发现 | `Verse.PlayDataLoader` 在 `StaticConstructorOnStartupUtility.CallAll()` 之后调用 `FloatMenuMakerMap.Init()`；后者用 `typeof(FloatMenuOptionProvider).AllSubclassesNonAbstract()` 实例化所有子类 |
+| 扫描范围含模组 | `GenTypes.AllTypes` 的来源 `AllActiveAssemblies` 包含 `mod.assemblies.loadedAssemblies` |
+| 扩展点 | `RimWorld.FloatMenuOptionProvider`：重写 `Drafted` / `Undrafted` / `Multiselect`，以及 `GetSingleOptionFor(Pawn clickedPawn, FloatMenuContext context)`、`TargetPawnValid` |
+| 上下文 | `FloatMenuContext.FirstSelectedPawn` / `ClickedPawns` / `ClickedCell` |
+| 禁用项 | `FloatMenuOption.Disabled` 是只读派生属性（`action == null`），禁用项用 `new FloatMenuOption(label, null)` |
+| 菜单优先级 | `MenuOptionPriority { DisabledOption, GoHere, VeryLow, Low, Default, High, AttackEnemy, InitiateSocial, RescueOrCapture, SummonThreat }` |
+
+### 11.2 工作链
+
+| 事实 | 签名 |
+| --- | --- |
+| 接取工作 | `Pawn_JobTracker.TryTakeOrderedJob(Job job, JobTag? tag = JobTag.Misc, bool requestQueueing = false)` |
+| 造 Job | `JobMaker.MakeJob(JobDef, LocalTargetInfo)` |
+| 移动 | `Toils_Goto.GotoThing(TargetIndex, PathEndMode)` |
+| 等待 | `ToilCompleteMode { Undefined, Instant, PatherArrival, Delay, FinishedBusy, Never }`；`Toil.AddEndCondition(Func<JobCondition>)` / `AddFailCondition(Func<bool>)` / `AddFinishAction(Action)` |
+| 读档 | `JobDriver.ExposeData` 在 `PostLoadInit` 调用 `SetupToils()` 重建 toils，并保留 `curToilIndex`；判定状态需自行按 `LoadSaveMode` 处理 |
+| 工作定义 | `Verse.JobDef`：`driverClass` / `reportString` / `playerInterruptible` / `casualInterruptible` / `suspendable` |
+
+### 11.3 判定条窗口（不暂停）
+
+| 事实 | 说明 |
+| --- | --- |
+| 窗口本身不暂停 | `Window.forcePause` 默认 `false`；`WindowStack.WindowsForcePause` 仅检查各窗口的该属性 |
+| 每帧更新 | `UIRoot.UIRootUpdate → WindowStack.WindowsUpdate → Window.WindowUpdate()`，不依赖 tick |
+| 绘制 | `Window.DoWindowContents(Rect)`；全屏透明需 `doWindowBackground=false`、`drawShadow=false`、`Margin=0` |
+| 层级 | `WindowLayer { GameUI, Dialog, SubSuper, Super }` |
+| 输入拦截 | `absorbInputAroundWindow`；窗口内 `mouseDown` 会被 `Window.InnerWindowOnGUI` 吃掉，要穿透需把 `windowRect` 收缩到目标区域 |
+| 输入/时间 | `UnityEngine.Input.GetMouseButtonDown`、`UnityEngine.Time.realtimeSinceStartupAsDouble`、`UnityEngine.Event/EventType` 在 UnityStubs 中均有真实实现 |
+| 屏幕坐标 | `UI.screenWidth/Height`（已含 `Prefs.UIScale`）、`UI.MousePositionOnUIInverted` |
+
+### 11.4 镜头与眩晕
+
+| 事实 | 签名/行为 |
+| --- | --- |
+| 镜头 | `CameraJumper.TryJump(GlobalTargetInfo, MovementMode)`；`MovementMode { Pan, Cut }`；`GlobalTargetInfo` 在 `RimWorld.Planet` |
+| 眩晕 | `Pawn.stances.stunner.StunFor(int ticks, Thing instigator, bool addBattleLog = true, bool showMote = true, bool disableRotation = false)` / `StopStun()` |
+| 眩晕的副作用 | stun 时 `Pawn_StanceTracker.FullBodyBusy == true`；`Pawn_PathFollower.PatherTick` 检查 `FullBodyBusy` 停止移动；stun 不改 `jobs`，对方原工作保留、`StopStun` 后自动继续 |
+| 朝向 | `Pawn_RotationTracker.FaceTarget(LocalTargetInfo)` 直接写 `pawn.Rotation`；`StunHandler.DisableRotation` 只影响每 tick 的 `UpdateRotation`，不阻止直接调用 `FaceTarget` |
+| 1.6 兼容 | `FloatMenuOptionProvider`、`StunHandler`、`CameraJumper`、`TimeSlower`、`Window` 等在上述类型 1.6 中也存在；1.6 编译引用 `UnityEngine.CoreModule`/`IMGUIModule`/`InputLegacyModule`/`TextRenderingModule` 等模块，1.7 引用 `UnityStubs` |
+
+### 11.5 临时一倍速
+
+| 事实 | 说明 |
+| --- | --- |
+| `TimeSlower` | `SignalForceNormalSpeed()` 为 800 tick、`SignalForceNormalSpeedShort()` 为 240 tick，**无法提前解除**；`TickManager.TickRateMultiplier` 读取 `slower.ForcedNormalSpeed` |
+| `CurTimeSpeed` | `TickManager.CurTimeSpeed` 可直接设 `TimeSpeed { Paused, Normal, Fast, Superfast, Ultrafast }`，setter 内部检查 `PlayerCanControl`（1.7 为 **private** `AcceptanceReport`，模组不可直接读） |
+| 模组可用判断 | `Current.Game.PlayerHasControl`（`Verse.Game` 的 public 属性） |
+| 本模组做法 | 判定期间每帧调用 `SignalForceNormalSpeed()`（800 tick 窗口持续刷新），结束后停止调用、由原版自然过期（有少量延迟） |
+

@@ -10,17 +10,17 @@
 
 ## 一、项目身份
 
-**Clap Your Hands** — RimWorld 1.7 社交互动扩展模组（兼容 1.6）。为殖民者加入「击掌」互动：四档结果（糟糕/普通/不错/完美）带来不同情绪与好感度变化，完美击掌额外给予 12 小时随机增益。
+**Clap Your Hands** — RimWorld 1.6 / 1.7 社交互动扩展模组。为殖民者加入「击掌」互动：四档结果（糟糕/普通/不错/完美）带来不同情绪与好感度变化，完美击掌额外给予 12 小时随机增益。
 
 | 项    | 值                                                                          |
 | ---- | -------------------------------------------------------------------------- |
 | 模组名  | Clap Your Hands                                                            |
 | 包 ID | `yanyu.clapyourhands`                                                      |
-| 语言   | C# 10 / .NET 10（`net10.0`，`LangVersion 10.0`）                   |
-| 游戏   | RimWorld 1.7（`Assembly-CSharp`，.NET 10）+ 引擎兼容桩 `UnityStubs`            |
+| 语言   | C# 10 / 双目标：`net472`（1.6）+ `net10.0`（1.7），`LangVersion 10.0` |
+| 游戏   | RimWorld 1.6（Mono）与 1.7（CoreCLR）；引用库 `lib/1.6`、`lib/1.7` |
 | 依赖   | **零第三方依赖** — 不使用 Harmony、不使用 HugsLib（见「四、架构核心」）                             |
 | 模组主类 | `ClapYourHands.ClapYourHandsMod`（原版 `Verse.Mod`），在 `About.xml` 的 `modClass` 中声明 |
-| 输出   | SDK 风格 csproj，`OutputPath` 直出 `Clap_Your_Hands/Assemblies/Clap_Your_Hands.dll` |
+| 输出   | SDK 风格 csproj，按版本直出 `1.6/Assemblies`、`1.7/Assemblies` |
 
 ### 设计文档（只读参考，改动需先对齐）
 
@@ -33,14 +33,14 @@
 
 | 操作     | 命令                                                                    |
 | ------ | --------------------------------------------------------------------- |
-| 编译     | `dotnet build Clap_Your_Hands/Clap_Your_Hands.csproj`（输出直写 `Assemblies/`） |
+| 编译     | `dotnet build Clap_Your_Hands/Clap_Your_Hands.csproj`（同时构建 1.6 / 1.7） |
 | 清理构建产物 | 运行 `11.bat`                                                           |
-| 覆盖游戏路径 | `dotnet build ... -p:RimWorldDir="<游戏根目录>"`                         |
+| 更新引用库 | 从游戏目录复制 `Assembly-CSharp.dll` 等程序集到 `lib/1.6` 或 `lib/1.7` |
 | 反编译原版  | `ilspycmd` 输出到 `..\kb\L0-证据/decompiled/<版本>/`（布局规范见 `..\kb\L0-证据/decompiled/README.md`） |
 | 检查 XML | PowerShell `[xml](Get-Content <file>)` 解析验证                           |
 | 游戏日志   | 游戏目录 `Player.log`（检索前缀 `[ClapYourHands]`）                             |
 
-> 游戏程序集引用路径为 Steam 本地目录（见 csproj 属性 `RimWorldDir`，1.7 起原版程序集直接在游戏根目录），CI 上不可编译；构建与测试均在本机完成。
+> 游戏程序集引用为本机副本 `lib/1.6`、`lib/1.7`（不入库）；CI 上不可编译，构建与测试均在本机完成。`LoadFolders.xml` 按游戏版本加载 `1.6/` 或 `1.7/` 下的程序集。
 
 ***
 
@@ -163,12 +163,18 @@
 | `ClapUtility.cs` | **核心逻辑**：抽取权重、好感度曲线（`SimpleCurve`）、结果抽取、结算应用、可用手判定（`TryGetHand`）、增益与冷却写入。**所有可调数值集中在本文件顶部** |
 | `InteractionWorker_Clap.cs` | 原版扩展点：`RandomSelectionWeight`（触发权重与排除）+ `Interacted`（结算入口） |
 | `ClapEffects.cs` | 完美击掌的 Fleck 表现：双方中点处的闪电纹样（核心 + 外发光两层）与溅落火花；音效播放与试听 |
-| `ClapSettings.cs` | 模组设置页（`ModSettings`）：音效音量缩放滑块（0%~100%）+ 试听按钮；`ClapYourHandsMod.Settings` 静态可读 |
+| `FloatMenuOptionProvider_Clap.cs` | 手动击掌的浮动菜单项（选中一个殖民者右键另一个）；冷却中可点但提示无效果，仇视灰显 |
+| `JobDriver_ClapWith.cs` | 手动击掌的工作：走到对方身边、stun 对方、打开判定条、按判定结果结算 |
+| `Window_ClapRhythm.cs` | 音游判定条（全屏透明窗口、不暂停）：7 段按概率染色、可配置时长的游标、命中放大、结果展示 2 秒 |
+| `ClapSettings.cs` | 模组设置页（`ModSettings`）：音效音量缩放 + 手动击掌判定时长；`ClapYourHandsMod.Settings` 静态可读 |
+| `ClapSettingsUI.cs` | 设置页的绘制风格：分组标题条、行底细条、行内按钮与文字作用域 |
 | `Hediff_ClapBuff.cs` | 12h 增益载体：等级合并（取最高／同级覆盖时长）；时长用原版 `HediffComp_Disappears.SetDuration` |
 | `Hediff_ClapCooldown.cs` | 24h 冷却载体：`Visible => false` 隐藏；时长同样用 `HediffComp_Disappears` |
 | `ClapDebug.cs` | 开发期调试开关（静态 bool，**不参与存档**）；`WeightMultiplier` 常量 |
 | `DebugTabMenu_ClapSettings.cs` | 把 `ClapDebug` 的静态开关**并入原版 settings 分页**（复用共享的 `absRoot`，归类到 `Clap` 分类；复选框由 `DebugActionNode.settingsField` 渲染） |
 | `Defs/DebugTabMenuDefs/` | `DebugTabMenuDef`（注册入口；零补丁限制：分页栏会随之多一个 tab，其内容复用原版 Settings 节点） |
+| `Defs/JobDefs/` | 手动击掌的工作定义（`Clap_ManualClap`） |
+| `LoadFolders.xml` | 按游戏版本加载 `1.6/` 或 `1.7/` 下的程序集；`About/Defs/Languages` 等由 `/` 共用 |
 | `Defs/InteractionDefs/` | 互动定义（`Clap`） |
 | `Defs/ThoughtDefs/` | 四档结果想法（Social；`baseMoodEffect` + `baseOpinionOffset`） |
 | `Defs/HediffDefs/` | `Clap_Buff`（3 级增益）、`Clap_Cooldown`（隐藏冷却） |

@@ -144,6 +144,33 @@ namespace ClapYourHands
 
         // ==================== 结果抽取与结算 ====================
 
+        /// <summary>四档归一化概率（顺序同 <see cref="ClapOutcome"/>），供判定条按概率比例分配段宽。</summary>
+        public static float[] GetOutcomeProbabilities(Pawn initiator, Pawn recipient)
+        {
+            int opinion = MutualOpinion(initiator, recipient);
+            float positiveFactor = PositiveWeightFactor.Evaluate(opinion);
+            float negativeFactor = NegativeWeightFactor.Evaluate(opinion);
+
+            float[] probs = new float[AllOutcomes.Length];
+            float sum = 0f;
+            for (int i = 0; i < AllOutcomes.Length; i++)
+            {
+                probs[i] = OutcomeWeight(AllOutcomes[i], positiveFactor, negativeFactor);
+                sum += probs[i];
+            }
+
+            if (sum <= 0f)
+            {
+                for (int i = 0; i < probs.Length; i++)
+                    probs[i] = 1f / probs.Length;
+                return probs;
+            }
+
+            for (int i = 0; i < probs.Length; i++)
+                probs[i] /= sum;
+            return probs;
+        }
+
         /// <summary>按双方好感度修正后抽取击掌结果。权重全部为 0 时回退为「普通」。</summary>
         public static ClapOutcome RollOutcome(Pawn initiator, Pawn recipient)
         {
@@ -239,6 +266,38 @@ namespace ClapYourHands
         {
             var cooldown = pawn?.health?.GetOrAddHediff(ClapDefOf.Clap_Cooldown) as Hediff_ClapCooldown;
             cooldown?.ResetTimer(CooldownTicks);
+        }
+
+        /// <summary>
+        /// 统一结算入口：自动击掌与手动击掌共用。
+        /// <paramref name="effectsEnabled"/> 为 false 时只播完美表现，不写心情/好感/增益/冷却。
+        /// </summary>
+        public static void ApplyClapResult(Pawn initiator, Pawn recipient, ClapOutcome outcome, bool effectsEnabled)
+        {
+            if (initiator is null || recipient is null || initiator.Dead || recipient.Dead)
+            {
+                Log.Error($"{ClapYourHandsMod.LogPrefix}击掌结算收到无效的小人，已跳过。");
+                return;
+            }
+
+            if (!effectsEnabled)
+            {
+                if (outcome == ClapOutcome.Perfect)
+                    ClapEffects.PlayPerfect(initiator, recipient);
+                return;
+            }
+
+            ApplyOutcome(initiator, recipient, outcome);
+
+            if (outcome == ClapOutcome.Perfect)
+            {
+                ApplyPerfectReward(initiator);
+                ApplyPerfectReward(recipient);
+                ClapEffects.PlayPerfect(initiator, recipient);
+            }
+
+            ApplyCooldown(initiator);
+            ApplyCooldown(recipient);
         }
 
     }

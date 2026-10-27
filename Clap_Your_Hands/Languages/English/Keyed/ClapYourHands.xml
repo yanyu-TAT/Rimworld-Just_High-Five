@@ -9,5 +9,21 @@
   <ClapYourHands.Settings.Volume>Sound volume: {0}</ClapYourHands.Settings.Volume>
   <ClapYourHands.Settings.Test>Test sound</ClapYourHands.Settings.Test>
   <ClapYourHands.Settings.TestNeedsMap>A game map is required to test the sound.</ClapYourHands.Settings.TestNeedsMap>
+  <ClapYourHands.Settings.VolumeGroup>Sound</ClapYourHands.Settings.VolumeGroup>
+  <ClapYourHands.Settings.ManualClapGroup>Manual high five</ClapYourHands.Settings.ManualClapGroup>
+  <ClapYourHands.Settings.JudgeDuration>High five judgment time: {0}s</ClapYourHands.Settings.JudgeDuration>
+
+  <!-- Manual high five -->
+  <ClapYourHands.ManualClap.Menu>High five with {0}</ClapYourHands.ManualClap.Menu>
+  <ClapYourHands.ManualClap.MenuCooldown>High five with {0} (on cooldown, no effect)</ClapYourHands.ManualClap.MenuCooldown>
+  <ClapYourHands.ManualClap.MenuNoHands>High five with {0} ({1} has no usable hand)</ClapYourHands.ManualClap.MenuNoHands>
+  <ClapYourHands.ManualClap.MenuHostile>High five with {0} (relationship too poor)</ClapYourHands.ManualClap.MenuHostile>
+  <ClapYourHands.ManualClap.NoHands>{0} has no usable hand - high five failed.</ClapYourHands.ManualClap.NoHands>
+  <ClapYourHands.ManualClap.OnCooldown>On cooldown - this high five had no effect.</ClapYourHands.ManualClap.OnCooldown>
+  <ClapYourHands.Rhythm.Click>Click to high five!</ClapYourHands.Rhythm.Click>
+  <ClapYourHands.Rhythm.Bad>Bad</ClapYourHands.Rhythm.Bad>
+  <ClapYourHands.Rhythm.Normal>Okay</ClapYourHands.Rhythm.Normal>
+  <ClapYourHands.Rhythm.Good>Good</ClapYourHands.Rhythm.Good>
+  <ClapYourHands.Rhythm.Perfect>Perfect</ClapYourHands.Rhythm.Perfect>
 
 </LanguageData>

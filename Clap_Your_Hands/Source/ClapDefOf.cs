@@ -9,6 +9,7 @@ namespace ClapYourHands
     public static class ClapDefOf
     {
         public static InteractionDef Clap;
+        public static JobDef Clap_ManualClap;
         public static ThoughtDef Clap_Bad;
         public static ThoughtDef Clap_Normal;
         public static ThoughtDef Clap_Good;
